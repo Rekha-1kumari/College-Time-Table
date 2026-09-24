@@ -1,0 +1,16 @@
+{
+  "name": "cgu-academic-timetable-erp",
+  "version": "1.0.0",
+  "description": "Full-Stack University Timetable, Faculty Scheduling, Attendance & Digital Logbook ERP for C.V. Raman Global University",
+  "scripts": {
+    "start": "node server/src/index.js",
+    "build": "cd client && npm run build",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,cyan\" \"cd server && npm run dev\" \"cd client && npm run dev\"",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
