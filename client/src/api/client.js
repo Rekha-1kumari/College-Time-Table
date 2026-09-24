@@ -52,7 +52,7 @@ export const api = {
   register: (userData) => request('/auth/register', { method: 'POST', body: JSON.stringify(userData) }),
   getMe: () => request('/auth/me'),
 
-  // Metadata
+  // Metadata (Courses, Branches, Years, Groups, Rooms, Faculty)
   getMeta: () => request('/meta'),
 
   // Admin Approval Queue
@@ -63,12 +63,43 @@ export const api = {
   // Faculty Workload Engine
   getFacultyWorkload: () => request('/admin/faculty-workload'),
 
-  // Timetable & Collision Prevention
+  // Available Free Faculty Finder for a specific slot
+  getFreeFaculty: (day, slotId) => request(`/timetable/free-faculty?day=${encodeURIComponent(day)}&slotId=${encodeURIComponent(slotId)}`),
+
+  // Timetable CRUD & Collision Handling
   getTimetable: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
+    const cleanParams = {};
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== undefined && v !== null && v !== 'All') {
+        cleanParams[k] = v;
+      }
+    }
+    const query = new URLSearchParams(cleanParams).toString();
     return request(`/timetable${query ? `?${query}` : ''}`);
   },
   checkClash: (candidate) => request('/timetable/check-clash', { method: 'POST', body: JSON.stringify(candidate) }),
   createSlot: (slotData) => request('/timetable', { method: 'POST', body: JSON.stringify(slotData) }),
-  deleteSlot: (id) => request(`/timetable/${id}`, { method: 'DELETE' })
+  updateSlot: (id, slotData) => request(`/timetable/${id}`, { method: 'PUT', body: JSON.stringify(slotData) }),
+  deleteSlot: (id) => request(`/timetable/${id}`, { method: 'DELETE' }),
+
+  // Semester Setup Case 1: Auto-generate routine for a branch/group
+  autoGenerateRoutine: (course, branch, year, sectionId) => request('/timetable/auto-generate', {
+    method: 'POST',
+    body: JSON.stringify({ course, branch, year, sectionId })
+  }),
+
+  // Case 3: Reassign / Proxy Faculty on leave
+  reassignFaculty: (slotId, newTeacherId, reason) => request(`/timetable/${slotId}/reassign`, {
+    method: 'POST',
+    body: JSON.stringify({ newTeacherId, reason })
+  }),
+
+  // Suspend or Switch to Online Mode
+  setSlotMode: (slotId, mode, reason) => request(`/timetable/${slotId}/mode`, {
+    method: 'POST',
+    body: JSON.stringify({ mode, reason })
+  }),
+
+  // Campus Resource Occupancy Ledger
+  getOccupancyLedger: () => request('/timetable/occupancy-ledger')
 };
