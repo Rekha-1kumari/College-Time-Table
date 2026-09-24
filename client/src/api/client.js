@@ -5,11 +5,8 @@ export function getAuthToken() {
 }
 
 export function setAuthToken(token) {
-  if (token) {
-    localStorage.setItem('cgu_erp_token', token);
-  } else {
-    localStorage.removeItem('cgu_erp_token');
-  }
+  if (token) localStorage.setItem('cgu_erp_token', token);
+  else localStorage.removeItem('cgu_erp_token');
 }
 
 export function getCurrentUser() {
@@ -22,11 +19,8 @@ export function getCurrentUser() {
 }
 
 export function setCurrentUser(user) {
-  if (user) {
-    localStorage.setItem('cgu_erp_user', JSON.stringify(user));
-  } else {
-    localStorage.removeItem('cgu_erp_user');
-  }
+  if (user) localStorage.setItem('cgu_erp_user', JSON.stringify(user));
+  else localStorage.removeItem('cgu_erp_user');
 }
 
 async function request(endpoint, options = {}) {
@@ -44,7 +38,10 @@ async function request(endpoint, options = {}) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error || 'Server error occurred');
+    const err = new Error(data.message || data.error || 'Request failed');
+    err.status = response.status;
+    err.data = data;
+    throw err;
   }
   return data;
 }
@@ -58,38 +55,20 @@ export const api = {
   // Metadata
   getMeta: () => request('/meta'),
 
-  // Timetable
+  // Admin Approval Queue
+  getPendingUsers: () => request('/admin/pending-users'),
+  approveUser: (id) => request(`/admin/approve-user/${id}`, { method: 'POST' }),
+  rejectUser: (id) => request(`/admin/reject-user/${id}`, { method: 'POST' }),
+
+  // Faculty Workload Engine
+  getFacultyWorkload: () => request('/admin/faculty-workload'),
+
+  // Timetable & Collision Prevention
   getTimetable: (params = {}) => {
     const query = new URLSearchParams(params).toString();
     return request(`/timetable${query ? `?${query}` : ''}`);
   },
-  checkConflict: (candidate) => request('/timetable/conflict-check', { method: 'POST', body: JSON.stringify(candidate) }),
+  checkClash: (candidate) => request('/timetable/check-clash', { method: 'POST', body: JSON.stringify(candidate) }),
   createSlot: (slotData) => request('/timetable', { method: 'POST', body: JSON.stringify(slotData) }),
-  updateSlot: (id, slotData) => request(`/timetable/${id}`, { method: 'PUT', body: JSON.stringify(slotData) }),
-  deleteSlot: (id) => request(`/timetable/${id}`, { method: 'DELETE' }),
-
-  // Teacher Attendance
-  getTeacherAttendance: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return request(`/attendance/teachers${query ? `?${query}` : ''}`);
-  },
-  punchAttendance: (data) => request('/attendance/teachers/punch', { method: 'POST', body: JSON.stringify(data) }),
-
-  // Lecture Key Notes / Logbook
-  getNotes: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return request(`/notes${query ? `?${query}` : ''}`);
-  },
-  createNote: (noteData) => request('/notes', { method: 'POST', body: JSON.stringify(noteData) }),
-  deleteNote: (id) => request(`/notes/${id}`, { method: 'DELETE' }),
-
-  // Substitutions
-  getSubstitutions: () => request('/substitutions'),
-  requestSubstitution: (subData) => request('/substitutions/request', { method: 'POST', body: JSON.stringify(subData) }),
-  updateSubstitutionStatus: (id, status) => request(`/substitutions/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
-
-  // Analytics & Announcements
-  getVcOverview: () => request('/analytics/vc-overview'),
-  getAnnouncements: () => request('/announcements'),
-  createAnnouncement: (annData) => request('/announcements', { method: 'POST', body: JSON.stringify(annData) })
+  deleteSlot: (id) => request(`/timetable/${id}`, { method: 'DELETE' })
 };

@@ -7,317 +7,375 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, '../data');
 const DB_FILE = path.join(DATA_DIR, 'university_erp.json');
 
-// Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Initial Seed Data tailored for University (e.g. CV Raman Global University structure)
+// 15 Realistic Faculty Members for CSE Department + 1 Admin
 const defaultData = {
   university: {
     name: "C.V. Raman Global University",
     acronym: "CGU-Bhubaneswar",
-    tagline: "Autonomous Academic Excellence & Research Scheduling Portal",
-    currentAcademicYear: "2026-2027",
-    currentSemester: "Autumn (Odd) Semester 2026",
-    accreditations: ["NAAC A++ Grade", "NBA Accredited", "NIRF Top Ranked"]
+    department: "Department of Computer Science & Engineering",
+    academicSession: "Autumn (Odd) Semester 2026-27",
+    workingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   },
-  schools: [
-    { id: "FET", name: "Faculty of Engineering & Technology", deanId: "dean-fet" },
-    { id: "FMS", name: "Faculty of Management Studies", deanId: "dean-fms" },
-    { id: "FAS", name: "Faculty of Applied Sciences", deanId: "dean-fas" }
-  ],
-  departments: [
-    { id: "CSE", schoolId: "FET", name: "Computer Science & Engineering", code: "CSE", hodId: "hod-cse", roomCount: 14, studentCount: 720 },
-    { id: "AIML", schoolId: "FET", name: "Artificial Intelligence & Machine Learning", code: "AIML", hodId: "hod-aiml", roomCount: 8, studentCount: 360 },
-    { id: "ECE", schoolId: "FET", name: "Electronics & Communication Engineering", code: "ECE", hodId: "hod-ece", roomCount: 10, studentCount: 420 },
-    { id: "MBA", schoolId: "FMS", name: "Department of Business Analytics & MBA", code: "MBA", hodId: "hod-mba", roomCount: 6, studentCount: 240 }
-  ],
-  rooms: [
-    { id: "LH-101", name: "Lecture Hall 101 (Smart AV)", capacity: 75, block: "Ramanujan Block", type: "Lecture Hall" },
-    { id: "LH-102", name: "Lecture Hall 102 (Smart AV)", capacity: 75, block: "Ramanujan Block", type: "Lecture Hall" },
-    { id: "LH-201", name: "Lecture Hall 201 (Interactive)", capacity: 70, block: "Aryabhatta Block", type: "Lecture Hall" },
-    { id: "LAB-CS1", name: "Alan Turing High-Perf Computing Lab", capacity: 45, block: "Ramanujan Block", type: "Computer Lab" },
-    { id: "LAB-AI2", name: "NVIDIA AI & Deep Learning Studio", capacity: 40, block: "Innovation Tower", type: "Specialized Lab" },
-    { id: "AUD-MAIN", name: "C.V. Raman Central Auditorium", capacity: 350, block: "Admin Complex", type: "Auditorium" }
-  ],
+  
+  // 1 Coordinator + 15 Department Faculty + 1 Sample Student
   users: [
+    // 1 Dedicated Timetable Coordinator (Admin)
     {
-      id: "vc-01",
-      email: "vc@cgu-odisha.ac.in",
-      password: "password123",
-      name: "Prof. (Dr.) B. K. Sahoo",
-      role: "VC",
-      title: "Hon'ble Vice Chancellor",
-      school: "Executive Directorate",
-      department: "All Schools",
-      phone: "+91 94370 12001",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
-    },
-    {
-      id: "dean-fet",
-      email: "dean.engineering@cgu-odisha.ac.in",
-      password: "password123",
-      name: "Prof. (Dr.) R. K. Mohapatra",
-      role: "DEAN",
-      title: "Dean, Faculty of Engineering & Technology",
-      school: "FET",
-      department: "Engineering Sciences",
-      phone: "+91 94370 23114",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
-    },
-    {
-      id: "hod-cse",
-      email: "hod.cse@cgu-odisha.ac.in",
-      password: "password123",
-      name: "Dr. Suchismita Rautray",
-      role: "HOD",
-      title: "Head of Department (CSE)",
-      school: "FET",
-      department: "CSE",
-      phone: "+91 98611 44521",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
-    },
-    {
-      id: "admin-tt",
-      email: "timetable.officer@cgu-odisha.ac.in",
+      id: "admin-cgu",
+      email: "admin@cgu-odisha.ac.in",
       password: "password123",
       name: "Er. Manoj Pattnaik",
       role: "ADMIN",
-      title: "Chief University Time Table Coordinator",
-      school: "FET",
-      department: "Academic Section",
+      designation: "Chief Timetable Coordinator & Academic Officer",
+      department: "CSE",
+      empCode: "CGU-ADM-001",
       phone: "+91 94399 77810",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
     },
+
+    // 15 Department Faculty Members
     {
-      id: "fac-101",
+      id: "fac-01",
       email: "priya.sharma@cgu-odisha.ac.in",
       password: "password123",
       name: "Dr. Priya Sharma",
       role: "TEACHER",
-      title: "Associate Professor",
-      school: "FET",
+      designation: "Associate Professor",
       department: "CSE",
-      designation: "Assoc. Professor & AI Research Lead",
-      empCode: "CGU-FAC-2018-042",
-      phone: "+91 98532 99123",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80"
+      specialization: "Design & Analysis of Algorithms",
+      maxHoursPerWeek: 14,
+      empCode: "CGU-CSE-101",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
     },
     {
-      id: "fac-102",
+      id: "fac-02",
       email: "arun.verma@cgu-odisha.ac.in",
       password: "password123",
       name: "Prof. Arun Verma",
       role: "TEACHER",
-      title: "Assistant Professor (Sr. Scale)",
-      school: "FET",
+      designation: "Assistant Professor (Sr. Scale)",
       department: "CSE",
-      designation: "Systems & Network Architect",
-      empCode: "CGU-FAC-2020-089",
-      phone: "+91 97782 55190",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80"
+      specialization: "Operating Systems & Concurrency",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-102",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
     },
     {
-      id: "fac-103",
+      id: "fac-03",
+      email: "suchismita.mohanty@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Suchismita Mohanty",
+      role: "TEACHER",
+      designation: "Professor",
+      department: "CSE",
+      specialization: "Machine Learning & AI",
+      maxHoursPerWeek: 12,
+      empCode: "CGU-CSE-103",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-04",
+      email: "rajesh.tripathy@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Rajesh K. Tripathy",
+      role: "TEACHER",
+      designation: "Associate Professor",
+      department: "CSE",
+      specialization: "Database Management Systems",
+      maxHoursPerWeek: 14,
+      empCode: "CGU-CSE-104",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-05",
       email: "meenakshi.jena@cgu-odisha.ac.in",
       password: "password123",
-      name: "Dr. Meenakshi Jena",
+      name: "Prof. Meenakshi Jena",
       role: "TEACHER",
-      title: "Professor of Data Engineering",
-      school: "FET",
-      department: "AIML",
-      designation: "Machine Learning Coordinator",
-      empCode: "CGU-FAC-2015-019",
-      phone: "+91 94371 88204",
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80"
+      designation: "Assistant Professor",
+      department: "CSE",
+      specialization: "Software Engineering & Testing",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-105",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
     },
     {
-      id: "stu-501",
+      id: "fac-06",
+      email: "debashis.pradhan@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Debashis Pradhan",
+      role: "TEACHER",
+      designation: "Associate Professor",
+      department: "CSE",
+      specialization: "Computer Organization & Architecture",
+      maxHoursPerWeek: 14,
+      empCode: "CGU-CSE-106",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-07",
+      email: "snigdha.samal@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Prof. Snigdha Samal",
+      role: "TEACHER",
+      designation: "Assistant Professor",
+      department: "CSE",
+      specialization: "Theory of Computation & Automata",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-107",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-08",
+      email: "bikash.sahu@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Er. Bikash Ranjan Sahu",
+      role: "TEACHER",
+      designation: "Assistant Professor",
+      department: "CSE",
+      specialization: "Cloud Computing & DevOps Studio",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-108",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-09",
+      email: "lipsa.dash@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Lipsa Dash",
+      role: "TEACHER",
+      designation: "Associate Professor",
+      department: "CSE",
+      specialization: "Data Structures & Advanced C++",
+      maxHoursPerWeek: 14,
+      empCode: "CGU-CSE-109",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-10",
+      email: "subhashree.mishra@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Prof. Subhashree Mishra",
+      role: "TEACHER",
+      designation: "Assistant Professor",
+      department: "CSE",
+      specialization: "Web Technologies & Full-Stack",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-110",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-11",
+      email: "ashish.panda@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Er. Ashish Panda",
+      role: "TEACHER",
+      designation: "Assistant Professor",
+      department: "CSE",
+      specialization: "Cyber Security & Cryptography",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-111",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-12",
+      email: "soumya.nayak@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Soumya Ranjan Nayak",
+      role: "TEACHER",
+      designation: "Professor",
+      department: "CSE",
+      specialization: "Distributed Systems & Parallel Computing",
+      maxHoursPerWeek: 12,
+      empCode: "CGU-CSE-112",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-13",
+      email: "puja.priyadarshini@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Prof. Puja Priyadarshini",
+      role: "TEACHER",
+      designation: "Assistant Professor",
+      department: "CSE",
+      specialization: "Java & Object Oriented Programming",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-113",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-14",
+      email: "rakesh.mohanty@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Er. Rakesh Kumar Mohanty",
+      role: "TEACHER",
+      designation: "Senior System Analyst & Lab In-Charge",
+      department: "CSE",
+      specialization: "Linux Kernel & Unix Programming Lab",
+      maxHoursPerWeek: 16,
+      empCode: "CGU-CSE-114",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+    {
+      id: "fac-15",
+      email: "monalisa.biswal@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Monalisa Biswal",
+      role: "TEACHER",
+      designation: "Associate Professor",
+      department: "CSE",
+      specialization: "Computer Vision & Deep Learning Lab",
+      maxHoursPerWeek: 14,
+      empCode: "CGU-CSE-115",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+
+    // Sample Student
+    {
+      id: "stu-01",
       email: "rohit.behera@cgu.edu.in",
       password: "password123",
       name: "Rohit Behera",
       role: "STUDENT",
-      title: "Undergraduate Scholar",
-      school: "FET",
+      designation: "Student Scholar",
       department: "CSE",
-      regNo: "2301297042",
       section: "CSE-5A",
-      semester: "5th Semester",
-      phone: "+91 82490 11987",
-      avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&q=80"
+      regNo: "2301297042",
+      status: "ACTIVE",
+      createdAt: "2026-08-01"
+    },
+
+    // 1 Sample Pending User needing Admin Approval
+    {
+      id: "usr-pending-1",
+      email: "alok.tripathy@cgu-odisha.ac.in",
+      password: "password123",
+      name: "Dr. Alok Tripathy",
+      role: "TEACHER",
+      designation: "Visiting Assistant Professor",
+      department: "CSE",
+      specialization: "Natural Language Processing",
+      empCode: "CGU-NEW-2026",
+      status: "PENDING_APPROVAL",
+      createdAt: new Date().toISOString().split('T')[0]
     }
   ],
-  subjects: [
-    { code: "CS501", name: "Design & Analysis of Algorithms", credits: 4, ltp: "3-1-0", dept: "CSE" },
-    { code: "CS502", name: "Database Management Systems", credits: 4, ltp: "3-0-2", dept: "CSE" },
-    { code: "CS503", name: "Operating Systems & Concurrency", credits: 4, ltp: "3-1-0", dept: "CSE" },
-    { code: "AI504", name: "Deep Learning Foundations", credits: 4, ltp: "3-0-2", dept: "AIML" },
-    { code: "CS505P", name: "Advanced Linux & OS Kernel Lab", credits: 2, ltp: "0-0-3", dept: "CSE" },
-    { code: "HS506", name: "Universal Human Values & Professional Ethics", credits: 2, ltp: "2-0-0", dept: "FET" }
-  ],
+
+  // Department Batches / Sections
   sections: [
-    { id: "CSE-5A", name: "B.Tech CSE - 5th Sem (Section A)", dept: "CSE", semester: 5, strength: 68 },
-    { id: "CSE-5B", name: "B.Tech CSE - 5th Sem (Section B)", dept: "CSE", semester: 5, strength: 65 },
-    { id: "AIML-5A", name: "B.Tech AI&ML - 5th Sem (Section A)", dept: "AIML", semester: 5, strength: 62 },
-    { id: "CSE-7A", name: "B.Tech CSE - 7th Sem (Section A)", dept: "CSE", semester: 7, strength: 64 }
+    { id: "CSE-3A", name: "B.Tech CSE - 3rd Sem (Sec A)", semester: 3, strength: 65 },
+    { id: "CSE-3B", name: "B.Tech CSE - 3rd Sem (Sec B)", semester: 3, strength: 64 },
+    { id: "CSE-5A", name: "B.Tech CSE - 5th Sem (Sec A)", semester: 5, strength: 68 },
+    { id: "CSE-5B", name: "B.Tech CSE - 5th Sem (Sec B)", semester: 5, strength: 66 },
+    { id: "CSE-7A", name: "B.Tech CSE - 7th Sem (Sec A)", semester: 7, strength: 62 }
   ],
+
+  // Lecture Halls & Practical Labs
+  rooms: [
+    { id: "LH-101", name: "Smart Lecture Hall 101", capacity: 75, type: "Theory", block: "Ramanujan Block" },
+    { id: "LH-102", name: "Smart Lecture Hall 102", capacity: 75, type: "Theory", block: "Ramanujan Block" },
+    { id: "LH-201", name: "Lecture Hall 201", capacity: 70, type: "Theory", block: "Aryabhatta Block" },
+    { id: "LH-202", name: "Lecture Hall 202", capacity: 70, type: "Theory", block: "Aryabhatta Block" },
+    { id: "LAB-TURING", name: "Alan Turing Systems & OS Lab", capacity: 45, type: "Lab", block: "Ramanujan Block (CS Lab 1)" },
+    { id: "LAB-LINUX", name: "Linux & Network Computing Studio", capacity: 45, type: "Lab", block: "Ramanujan Block (CS Lab 2)" },
+    { id: "LAB-NVIDIA", name: "NVIDIA Deep Learning & AI Studio", capacity: 40, type: "Lab", block: "Innovation Tower" }
+  ],
+
+  // Department Subjects (Theory & Practical Lab Blocks)
+  subjects: [
+    // 3rd Sem
+    { code: "CS301", name: "Data Structures & Algorithms", credits: 4, type: "Theory", ltp: "3-1-0", sem: 3 },
+    { code: "CS302", name: "Digital Logic & Computer Org", credits: 4, type: "Theory", ltp: "3-1-0", sem: 3 },
+    { code: "CS303", name: "Object Oriented Programming (Java)", credits: 3, type: "Theory", ltp: "3-0-0", sem: 3 },
+    { code: "CS304P", name: "Data Structures Practical Lab", credits: 2, type: "Lab", ltp: "0-0-3", sem: 3 },
+
+    // 5th Sem
+    { code: "CS501", name: "Design & Analysis of Algorithms", credits: 4, type: "Theory", ltp: "3-1-0", sem: 5 },
+    { code: "CS502", name: "Operating Systems & Concurrency", credits: 4, type: "Theory", ltp: "3-1-0", sem: 5 },
+    { code: "CS503", name: "Database Management Systems", credits: 4, type: "Theory", ltp: "3-0-2", sem: 5 },
+    { code: "CS504", name: "Theory of Computation & Automata", credits: 4, type: "Theory", ltp: "3-1-0", sem: 5 },
+    { code: "CS505P", name: "Advanced Linux & OS Kernel Lab", credits: 2, type: "Lab", ltp: "0-0-3", sem: 5 },
+    { code: "CS506P", name: "DBMS & SQL Studio Lab", credits: 2, type: "Lab", ltp: "0-0-3", sem: 5 },
+
+    // 7th Sem
+    { code: "CS701", name: "Cloud Computing & Distributed Arch", credits: 3, type: "Theory", ltp: "3-0-0", sem: 7 },
+    { code: "CS702", name: "Machine Learning & Neural Nets", credits: 4, type: "Theory", ltp: "3-1-0", sem: 7 },
+    { code: "CS703P", name: "AI & Machine Learning Studio Lab", credits: 2, type: "Lab", ltp: "0-0-3", sem: 7 }
+  ],
+
+  // Standard College Periods
   timeSlots: [
-    { id: "P1", period: 1, startTime: "08:30", endTime: "09:25", label: "Period 1 (08:30 - 09:25)" },
-    { id: "P2", period: 2, startTime: "09:25", endTime: "10:20", label: "Period 2 (09:25 - 10:20)" },
-    { id: "TEA", period: 0, startTime: "10:20", endTime: "10:35", label: "Academic Tea Break", isBreak: true },
-    { id: "P3", period: 3, startTime: "10:35", endTime: "11:30", label: "Period 3 (10:35 - 11:30)" },
-    { id: "P4", period: 4, startTime: "11:30", endTime: "12:25", label: "Period 4 (11:30 - 12:25)" },
-    { id: "LUNCH", period: 0, startTime: "12:25", endTime: "01:15", label: "Central Lunch Recess", isBreak: true },
-    { id: "P5", period: 5, startTime: "01:15", endTime: "02:10", label: "Period 5 (01:15 - 02:10)" },
-    { id: "P6", period: 6, startTime: "02:10", endTime: "03:05", label: "Period 6 (02:10 - 03:05)" },
-    { id: "P7", period: 7, startTime: "03:15", endTime: "05:00", label: "Lab / Practical Block (03:15 - 05:00)" }
+    { id: "P1", period: 1, startTime: "08:30", endTime: "09:25", label: "P1 (08:30 - 09:25)" },
+    { id: "P2", period: 2, startTime: "09:25", endTime: "10:20", label: "P2 (09:25 - 10:20)" },
+    { id: "TEA", period: 0, startTime: "10:20", endTime: "10:35", label: "Tea Break", isBreak: true },
+    { id: "P3", period: 3, startTime: "10:35", endTime: "11:30", label: "P3 (10:35 - 11:30)" },
+    { id: "P4", period: 4, startTime: "11:30", endTime: "12:25", label: "P4 (11:30 - 12:25)" },
+    { id: "LUNCH", period: 0, startTime: "12:25", endTime: "01:15", label: "Lunch Recess", isBreak: true },
+    { id: "P5", period: 5, startTime: "01:15", endTime: "02:10", label: "P5 (01:15 - 02:10)" },
+    { id: "P6", period: 6, startTime: "02:10", endTime: "03:05", label: "P6 (02:10 - 03:05)" },
+    { id: "P7", period: 7, startTime: "03:15", endTime: "05:00", label: "Lab Session (03:15 - 05:00)", isLabBlock: true }
   ],
+
+  // Initial Conflict-Free Scheduled Routine
   timetable: [
-    // Monday
-    { id: "tt-mon-1", day: "Monday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-mon-2", day: "Monday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-102", roomId: "LH-101" },
-    { id: "tt-mon-3", day: "Monday", slotId: "P3", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-mon-4", day: "Monday", slotId: "P4", sectionId: "CSE-5A", subjectCode: "AI504", teacherId: "fac-103", roomId: "LH-102" },
-    { id: "tt-mon-5", day: "Monday", slotId: "P7", sectionId: "CSE-5A", subjectCode: "CS505P", teacherId: "fac-102", roomId: "LAB-CS1" },
+    // CSE-5A Routine
+    { id: "tt-1", day: "Monday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-01", roomId: "LH-101" },
+    { id: "tt-2", day: "Monday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-02", roomId: "LH-101" },
+    { id: "tt-3", day: "Monday", slotId: "P3", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-04", roomId: "LH-101" },
+    { id: "tt-4", day: "Monday", slotId: "P4", sectionId: "CSE-5A", subjectCode: "CS504", teacherId: "fac-07", roomId: "LH-101" },
+    { id: "tt-5", day: "Monday", slotId: "P7", sectionId: "CSE-5A", subjectCode: "CS505P", teacherId: "fac-14", roomId: "LAB-TURING" },
 
-    // Tuesday
-    { id: "tt-tue-1", day: "Tuesday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-tue-2", day: "Tuesday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "AI504", teacherId: "fac-103", roomId: "LH-102" },
-    { id: "tt-tue-3", day: "Tuesday", slotId: "P3", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-tue-4", day: "Tuesday", slotId: "P5", sectionId: "CSE-5A", subjectCode: "HS506", teacherId: "fac-102", roomId: "LH-101" },
+    { id: "tt-6", day: "Tuesday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-04", roomId: "LH-101" },
+    { id: "tt-7", day: "Tuesday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-01", roomId: "LH-101" },
+    { id: "tt-8", day: "Tuesday", slotId: "P3", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-02", roomId: "LH-101" },
+    { id: "tt-9", day: "Tuesday", slotId: "P5", sectionId: "CSE-5A", subjectCode: "CS504", teacherId: "fac-07", roomId: "LH-101" },
 
-    // Wednesday
-    { id: "tt-wed-1", day: "Wednesday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-102", roomId: "LH-101" },
-    { id: "tt-wed-2", day: "Wednesday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-wed-3", day: "Wednesday", slotId: "P3", sectionId: "CSE-5A", subjectCode: "AI504", teacherId: "fac-103", roomId: "LH-102" },
-    { id: "tt-wed-4", day: "Wednesday", slotId: "P7", sectionId: "CSE-5A", subjectCode: "AI504", teacherId: "fac-103", roomId: "LAB-AI2" },
+    { id: "tt-10", day: "Wednesday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-02", roomId: "LH-101" },
+    { id: "tt-11", day: "Wednesday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-01", roomId: "LH-101" },
+    { id: "tt-12", day: "Wednesday", slotId: "P3", sectionId: "CSE-5A", subjectCode: "CS504", teacherId: "fac-07", roomId: "LH-101" },
+    { id: "tt-13", day: "Wednesday", slotId: "P7", sectionId: "CSE-5A", subjectCode: "CS506P", teacherId: "fac-04", roomId: "LAB-LINUX" },
 
-    // Thursday
-    { id: "tt-thu-1", day: "Thursday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-thu-2", day: "Thursday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-102", roomId: "LH-101" },
-    { id: "tt-thu-3", day: "Thursday", slotId: "P4", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-101", roomId: "LH-101" },
+    { id: "tt-14", day: "Thursday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS504", teacherId: "fac-07", roomId: "LH-101" },
+    { id: "tt-15", day: "Thursday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-04", roomId: "LH-101" },
+    { id: "tt-16", day: "Thursday", slotId: "P4", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-01", roomId: "LH-101" },
 
-    // Friday
-    { id: "tt-fri-1", day: "Friday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "AI504", teacherId: "fac-103", roomId: "LH-102" },
-    { id: "tt-fri-2", day: "Friday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-101", roomId: "LH-101" },
-    { id: "tt-fri-3", day: "Friday", slotId: "P5", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-102", roomId: "LH-101" },
-    { id: "tt-fri-4", day: "Friday", slotId: "P7", sectionId: "CSE-5A", subjectCode: "CS505P", teacherId: "fac-102", roomId: "LAB-CS1" },
+    { id: "tt-17", day: "Friday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "CS501", teacherId: "fac-01", roomId: "LH-101" },
+    { id: "tt-18", day: "Friday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS502", teacherId: "fac-02", roomId: "LH-101" },
+    { id: "tt-19", day: "Friday", slotId: "P5", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-04", roomId: "LH-101" },
 
-    // Saturday
-    { id: "tt-sat-1", day: "Saturday", slotId: "P1", sectionId: "CSE-5A", subjectCode: "HS506", teacherId: "fac-102", roomId: "LH-101" },
-    { id: "tt-sat-2", day: "Saturday", slotId: "P2", sectionId: "CSE-5A", subjectCode: "CS503", teacherId: "fac-101", roomId: "LH-101" }
-  ],
-  teacherAttendance: [
-    {
-      id: "att-001",
-      teacherId: "fac-101",
-      date: new Date().toISOString().split('T')[0],
-      checkInTime: "08:14 AM",
-      status: "Present",
-      sessionTaken: 3,
-      mode: "Biometric & Geo-Punched",
-      remarks: "On-time arrival at Ramanujan Block"
-    },
-    {
-      id: "att-002",
-      teacherId: "fac-102",
-      date: new Date().toISOString().split('T')[0],
-      checkInTime: "08:22 AM",
-      status: "Present",
-      sessionTaken: 2,
-      mode: "Campus RFID Portal",
-      remarks: "Classroom 101 hardware check completed"
-    },
-    {
-      id: "att-003",
-      teacherId: "fac-103",
-      date: new Date().toISOString().split('T')[0],
-      checkInTime: "08:28 AM",
-      status: "Present",
-      sessionTaken: 2,
-      mode: "Mobile Smart-Punch",
-      remarks: "AI Studio Lab setup verified"
-    }
-  ],
-  lectureKeyNotes: [
-    {
-      id: "note-101",
-      timetableId: "tt-mon-1",
-      teacherId: "fac-101",
-      subjectCode: "CS501",
-      sectionId: "CSE-5A",
-      date: new Date().toISOString().split('T')[0],
-      topic: "Divide and Conquer: Strassen's Matrix Multiplication & Master Theorem",
-      unitNo: "Unit II: Recurrences & Divide/Conquer",
-      durationMins: 55,
-      studentAttendanceCount: 64,
-      totalStudents: 68,
-      keyNotes: "Analyzed recursive complexity equation T(n) = 7T(n/2) + O(n^2). Demonstrated algorithmic reduction from O(n^3) to O(n^2.807). Students solved 3 practice recurrence relations on whiteboard.",
-      learningOutcomesAchieved: "Students can articulate when Strassen's algorithm dominates standard cubic multiplication and formulate Master Theorem bounds.",
-      homeworkAssigned: "Implement Strassen's algorithm in C++ / Python and submit runtime benchmarking plot vs numpy matrix multiplication.",
-      referenceLinks: "https://mit-press.mit.edu/books/introduction-algorithms-third-edition",
-      naacAudited: true
-    },
-    {
-      id: "note-102",
-      timetableId: "tt-mon-2",
-      teacherId: "fac-102",
-      subjectCode: "CS502",
-      sectionId: "CSE-5A",
-      date: new Date().toISOString().split('T')[0],
-      topic: "Relational Algebra to SQL Engine Optimization",
-      unitNo: "Unit III: Query Optimization & Execution",
-      durationMins: 55,
-      studentAttendanceCount: 62,
-      totalStudents: 68,
-      keyNotes: "Discussed selection push-down heuristic and join tree cardinality estimation. Traced query plan in PostgreSQL using EXPLAIN ANALYZE.",
-      learningOutcomesAchieved: "Understand index scans vs sequential table scans and cost-based query planner behavior.",
-      homeworkAssigned: "Write SQL schemas with B-Tree indexes for C.V. Raman University student registration portal.",
-      referenceLinks: "https://www.postgresql.org/docs/current/using-explain.html",
-      naacAudited: true
-    }
-  ],
-  substitutions: [
-    {
-      id: "sub-01",
-      date: new Date().toISOString().split('T')[0],
-      day: "Friday",
-      slotId: "P5",
-      originalTeacherId: "fac-102",
-      substituteTeacherId: "fac-101",
-      subjectCode: "CS502",
-      sectionId: "CSE-5A",
-      roomId: "LH-101",
-      reason: "Attending National Conference on Quantum Computing",
-      status: "Approved",
-      approvedBy: "hod-cse",
-      createdAt: new Date().toISOString()
-    }
-  ],
-  announcements: [
-    {
-      id: "ann-01",
-      title: "Mid-Term Examination Slot Freezing Notice (2026-27)",
-      postedBy: "Prof. (Dr.) B. K. Sahoo (VC)",
-      date: new Date().toISOString().split('T')[0],
-      priority: "High",
-      content: "All Deans and HODs are instructed to ensure laboratory practical evaluations conclude before the upcoming mid-semester academic assessment circle. Timetable slots for remedial classes will open from next Monday.",
-      targetRole: "ALL"
-    },
-    {
-      id: "ann-02",
-      title: "Alan Turing High-Performance Computing Lab Maintenance",
-      postedBy: "Dr. Suchismita Rautray (HOD CSE)",
-      date: new Date().toISOString().split('T')[0],
-      priority: "Medium",
-      content: "CUDA 12.4 and PyTorch 2.4 server updates will be applied on Saturday evening. Saturday lab periods remain scheduled normally.",
-      targetRole: "FACULTY"
-    }
+    // CSE-3A Routine
+    { id: "tt-20", day: "Monday", slotId: "P1", sectionId: "CSE-3A", subjectCode: "CS301", teacherId: "fac-09", roomId: "LH-102" },
+    { id: "tt-21", day: "Monday", slotId: "P2", sectionId: "CSE-3A", subjectCode: "CS302", teacherId: "fac-06", roomId: "LH-102" },
+    { id: "tt-22", day: "Monday", slotId: "P3", sectionId: "CSE-3A", subjectCode: "CS303", teacherId: "fac-13", roomId: "LH-102" },
+    { id: "tt-23", day: "Monday", slotId: "P7", sectionId: "CSE-3A", subjectCode: "CS304P", teacherId: "fac-09", roomId: "LAB-LINUX" },
+
+    // CSE-7A Routine
+    { id: "tt-24", day: "Tuesday", slotId: "P1", sectionId: "CSE-7A", subjectCode: "CS701", teacherId: "fac-08", roomId: "LH-201" },
+    { id: "tt-25", day: "Tuesday", slotId: "P2", sectionId: "CSE-7A", subjectCode: "CS702", teacherId: "fac-03", roomId: "LH-201" },
+    { id: "tt-26", day: "Tuesday", slotId: "P7", sectionId: "CSE-7A", subjectCode: "CS703P", teacherId: "fac-15", roomId: "LAB-NVIDIA" }
   ]
 };
 
-// Load or initialize DB
 export function getDb() {
   if (!fs.existsSync(DB_FILE)) {
     saveDb(defaultData);
@@ -327,7 +385,6 @@ export function getDb() {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
     return JSON.parse(raw);
   } catch (err) {
-    console.error("Error reading database file, returning default data:", err);
     return defaultData;
   }
 }
@@ -338,4 +395,10 @@ export function saveDb(data) {
   } catch (err) {
     console.error("Error writing database file:", err);
   }
+}
+
+// Reset helper
+export function resetDb() {
+  saveDb(defaultData);
+  return defaultData;
 }
